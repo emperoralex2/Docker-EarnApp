@@ -12,7 +12,7 @@ RUN apt update -y && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Download install script and determine version
-RUN wget -cq "https://brightdata.com/static/earnapp/install.sh" -O /app/setup.sh && \
+RUN wget -qO /app/setup.sh "https://brightdata.com/static/earnapp/install.sh" && \
     VERSION=$(grep VERSION= /app/setup.sh | cut -d'"' -f2) && \
     ARCH=$(dpkg --print-architecture) && \
     case "$ARCH" in \
@@ -20,9 +20,12 @@ RUN wget -cq "https://brightdata.com/static/earnapp/install.sh" -O /app/setup.sh
       arm64)  BIN="earnapp-arm64-$VERSION" ;; \
       *) echo "Unsupported architecture: $ARCH" && exit 1 ;; \
     esac && \
-    mkdir /download && \
-    wget -cq "https://cdn-earnapp.b-cdn.net/static/$BIN" -O /usr/bin/earnapp && \
+    echo "Downloading $BIN for $ARCH (version $VERSION)" && \
+    mkdir -p /download && \
+    (wget -qO /usr/bin/earnapp "https://cdn-earnapp.b-cdn.net/static/$BIN" || \
+     wget -qO /usr/bin/earnapp "https://cdn-earnapp.b-cdn.net/static/$BIN.tar.gz") && \
     chmod +x /usr/bin/earnapp
+
 
 # Fake some system utilities
 RUN printf '#!/bin/bash\n echo "%s"' "$(lsb_release -a 2>/dev/null || true)" > /usr/bin/lsb_release && \
