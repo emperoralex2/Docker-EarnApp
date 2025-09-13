@@ -16,7 +16,7 @@ RUN apt update -y && \
 RUN wget -cq "https://brightdata.com/static/earnapp/install.sh" --output-document=/app/setup.sh && \
     VERSION=$(grep VERSION= /app/setup.sh | cut -d'"' -f2) && \
     mkdir /download && \
-    wget -cq "https://cdn-earnapp.b-cdn.net/static/earnapp-arm64-$VERSION" --output-document=/usr/bin/earnapp && \ 
+    wget -cq "https://cdn-earnapp.b-cdn.net/static/earnapp-aarch64-$VERSION" --output-document=/usr/bin/earnapp && \ 
     echo | md5sum /usr/bin/earnapp && \
     chmod a+x /usr/bin/earnapp
 
